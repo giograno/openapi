@@ -48,6 +48,7 @@ jobs:
       - name: "Install LocalStack and LocalStack-ext"
         run: |
           python -m venv .oasvenv
+          source .oasvenv/bin/activate
           pip install localstack==${{ steps.generate_version.outputs.version }}
           pip install localstack-core==${{ steps.generate_version.outputs.version }}
           pip install localstack-ext==${{ steps.generate_version.outputs.version }}
@@ -56,15 +57,22 @@ jobs:
         run : |
           source .oasvenv/bin/activate
           pip install click
-          python bin/update_aws_spec.py
+          pip install pyyaml
+          python bin/update-aws-spec.py
 
       - name: "Commit release version"
         run: |
-          DEPENDENCY_FILE="requirements.txt" bin/release-helper.sh git-commit-release ${{ needs.compute-versions.outputs.release }}
+          bin/release-helper.sh git-commit-release ${{ steps.generate_version.outputs.version }}
           git push --follow-tags
 
-      - name: "Create GitHub release"
-        run: gh release create "v${{ needs.compute-versions.outputs.release }}" --generate-notes --draft
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            openapi/emulators/*${{ steps.generate_version.outputs.version }}*.yml          
+          draft: true
+          # token: ${{ secrets.LOCALSTACK_GITHUB_TOKEN }}
 
       - name: "Show git modifications"
         run: |
