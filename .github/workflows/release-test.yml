@@ -15,7 +15,7 @@ jobs:
       - name: "Checkout repository"
         uses: actions/checkout@v4
         with:
-          repository: giograno/localstack-openapi
+          repository: giograno/openapi
 
       - name: "Install release helper"
         run: |
