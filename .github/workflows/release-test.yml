@@ -65,10 +65,12 @@ jobs:
           DEPENDENCY_FILE="openapi/" bin/release-helper.sh git-commit-release ${{ steps.generate_version.outputs.version }}
           git push --follow-tags
 
+      # This one could be put eventually in a separate workflow in the openapi repo, gated by a tag trigger
       - name: Release
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
+        # if: startsWith(github.ref, 'refs/tags/')
         with:
+          name: v${{ steps.generate_version.outputs.version }}
           files: |
             openapi/emulators/*${{ steps.generate_version.outputs.version }}*.yml          
           draft: true
