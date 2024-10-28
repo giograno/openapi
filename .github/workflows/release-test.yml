@@ -62,7 +62,7 @@ jobs:
 
       - name: "Commit release version"
         run: |
-          bin/release-helper.sh git-commit-release ${{ steps.generate_version.outputs.version }}
+          DEPENDENCY_FILE="openapi/" bin/release-helper.sh git-commit-release ${{ steps.generate_version.outputs.version }}
           git push --follow-tags
 
       - name: Release
