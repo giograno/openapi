@@ -26,7 +26,7 @@ jobs:
       - name: "Install release helper"
         run: |
           mkdir -p bin
-          curl -o bin/release-helper.sh -L https://api.github.com/repos/localstack/localstack/contents/bin/release-helper.sh -H 'Accept: application/vnd.github.v3.raw'
+          curl -o bin/release-helper.sh -L https://api.github.com/repos/localstack/localstack-core/contents/bin/release-helper.sh -H 'Accept: application/vnd.github.v3.raw'
           chmod +x bin/release-helper.sh
 
       - name: "Prepare git config"
@@ -43,7 +43,6 @@ jobs:
       - name: "Wait for localstack, localstack-core, and localstack-ext release to appear"
         timeout-minutes: 3
         run: |
-          bin/release-helper.sh pip-download-retry localstack ${{ env.release }}
           bin/release-helper.sh pip-download-retry localstack-core ${{ env.release }}
           bin/release-helper.sh pip-download-retry localstack-ext ${{ env.release }}
 
@@ -51,6 +50,7 @@ jobs:
         run: |
           python -m venv .venv
           source .venv/bin/activate
+          pip install localstack-core==${{ env.release }}
           pip install localstack-ext==${{ env.release }}
 
       - name: "Create tagged LocalStack OpenAPI spec"
@@ -60,21 +60,21 @@ jobs:
           pip install pyyaml
           python bin/update-aws-spec.py
 
-      - name: "Commit release version"
-        # We set the openapi folder as a DEPENDENCY_FILE merely to have it added to the release commit
-        run: |
-          DEPENDENCY_FILE="openapi/" bin/release-helper.sh git-commit-release ${{ env.release }}
-          git push --follow-tags
-
-      - name: Release
-        uses: softprops/action-gh-release@v2
-        with:
-          name: v${{ env.release }}
-          files: |
-            openapi/emulators/localstack-spec.yml
-          tag_name: v${{ env.release }}
-          draft: true
-
+      # - name: "Commit release version"
+      #   # We set the openapi folder as a DEPENDENCY_FILE merely to have it added to the release commit
+      #   run: |
+      #     DEPENDENCY_FILE="openapi/" bin/release-helper.sh git-commit-release ${{ env.release }}
+      #     git push --follow-tags
+      #
+      # - name: Release
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     name: v${{ env.release }}
+      #     files: |
+      #       openapi/emulators/localstack-spec.yml
+      #     tag_name: v${{ env.release }}
+      #     draft: true
+      #
       - name: "Show git modifications"
         run: |
           git log --oneline -n 2
