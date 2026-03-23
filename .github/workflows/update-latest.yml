@@ -65,7 +65,7 @@ jobs:
         run: make install
 
       - name: Generate the latest spec
-        workding-directory: localstack-pro
+        working-directory: localstack-pro
         run: |
           source localstack-pro/.venv/bin/activate
           python bin/update-aws-spec.py --latest
