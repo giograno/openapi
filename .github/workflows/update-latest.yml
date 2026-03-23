@@ -67,7 +67,7 @@ jobs:
       - name: Generate the latest spec
         working-directory: localstack-pro
         run: |
-          source localstack-pro/.venv/bin/activate
+          source localstack-pro-core/.venv/bin/activate
           python bin/update-aws-spec.py --latest
       
       - name: Create PR
