@@ -26,7 +26,7 @@ jobs:
       - name: "Install release helper"
         run: |
           mkdir -p bin
-          curl -o bin/release-helper.sh -L https://api.github.com/repos/localstack/localstack-core/contents/bin/release-helper.sh -H 'Accept: application/vnd.github.v3.raw'
+          curl -o bin/release-helper.sh -L https://api.github.com/repos/localstack/localstack/contents/bin/release-helper.sh -H 'Accept: application/vnd.github.v3.raw'
           chmod +x bin/release-helper.sh
 
       - name: "Prepare git config"
